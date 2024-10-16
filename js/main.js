@@ -1,164 +1,119 @@
 
 let tasks = [];
 
-// Save tasks to localStorage
-function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
 // Load tasks from localStorage
 function loadTasks() {
     const savedTasks = localStorage.getItem('tasks');
     if (savedTasks) {
         tasks = JSON.parse(savedTasks);
     }
+    renderTasks();
 }
 
-// Reindex task IDs to ensure sequential numbering
-function reindexTasks() {
-    tasks.forEach((task, index) => {
-        task.id = index + 1;
-    });
+// Save tasks to localStorage
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 // Add a task
 function addTask() {
-    const description = prompt("Enter task description:");
-    if (!description) {
-        console.log("Task description cannot be empty.");
-        return;
+    const taskInput = document.getElementById('taskInput');
+    const description = taskInput.value.trim();
+    if (description) {
+        const newId = tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) + 1 : 1; // Automatically generate ID
+        tasks.push({
+            id: newId,
+            description: description,
+            completed: false
+        });
+        taskInput.value = '';
+        saveTasks();
+        renderTasks();
     }
-
-    const task = {
-        id: tasks.length + 1,
-        description: description,
-        completed: false
-    };
-    tasks.push(task);
-    console.log(`Task "${description}" added.`);
-    saveTasks();
 }
 
-// View all tasks
-function viewTasks() {
-    if (tasks.length === 0) {
-        console.log('No tasks available.');
-    } else {
-        console.log('Tasks:');
-        tasks.forEach(task => {
-            console.log(`${task.id}. ${task.description} [${task.completed ? 'Completed' : 'Not Completed'}]`);
-        });
-    }
+// Render tasks in the task list
+function renderTasks() {
+    const taskList = document.getElementById('taskList');
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    taskList.innerHTML = '';
+    const filteredTasks = tasks.filter(task => task.description.toLowerCase().includes(searchQuery));
+    filteredTasks.forEach(task => {
+        const taskItem = document.createElement('li');
+        taskItem.className = 'task-item';
+
+        const taskDesc = document.createElement('span');
+        taskDesc.className = 'task-desc';
+        if (task.completed) {
+            taskDesc.classList.add('task-completed');
+        }
+        taskDesc.textContent = task.description;
+
+        const actions = document.createElement('div');
+        actions.className = 'task-actions';
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.textContent = task.completed ? 'Undo' : 'Complete';
+        toggleBtn.onclick = function() {
+            toggleTask(task.id);
+        };
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.className = 'remove-btn';
+        removeBtn.onclick = function() {
+            removeTask(task.id);
+        };
+
+        actions.appendChild(toggleBtn);
+        actions.appendChild(removeBtn);
+
+        taskItem.appendChild(taskDesc);
+        taskItem.appendChild(actions);
+
+        taskList.appendChild(taskItem);
+    });
 }
 
 // Toggle task completion
-function toggleTask() {
-    const id = parseInt(prompt('Enter task ID to toggle:'));
+function toggleTask(id) {
     const task = tasks.find(t => t.id === id);
     if (task) {
         task.completed = !task.completed;
-        console.log(`Task "${task.description}" marked as ${task.completed ? 'completed' : 'not completed'}.`);
         saveTasks();
-    } else {
-        console.log('Task not found.');
+        renderTasks();
     }
 }
 
-// Remove a task by ID
-function removeTask() {
-    const id = parseInt(prompt('Enter task ID to remove:'));
-    const taskIndex = tasks.findIndex(t => t.id === id);
-    if (taskIndex > -1) {
-        const removedTask = tasks.splice(taskIndex, 1);
-        reindexTasks(); // Reindex tasks after removal
-        console.log(`Task "${removedTask[0].description}" removed.`);
-        saveTasks();
-    } else {
-        console.log('Task not found.');
-    }
+// Remove task by ID
+function removeTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveTasks();
+    renderTasks();
 }
 
-// Update task description
-function updateTask() {
-    const id = parseInt(prompt('Enter task ID to update:'));
-    const task = tasks.find(t => t.id === id);
-    if (task) {
-        const newDescription = prompt('Enter new description:');
-        if (newDescription) {
-            task.description = newDescription;
-            console.log(`Task ${id} updated to "${newDescription}".`);
-            saveTasks();
-        }
-    } else {
-        console.log('Task not found.');
-    }
+// Clear all tasks
+function clearAllTasks() {
+    tasks = [];
+    saveTasks();
+    renderTasks();
 }
 
-// Search tasks by name
+// Toggle all tasks
+function toggleAllTasks() {
+    tasks.forEach(task => {
+        task.completed = !task.completed;
+    });
+    saveTasks();
+    renderTasks();
+}
+
+// Search tasks
 function searchTasks() {
-    const keyword = prompt('Enter keyword to search:');
-    const filteredTasks = tasks.filter(task => task.description.toLowerCase().includes(keyword.toLowerCase()));
-    if (filteredTasks.length > 0) {
-        console.log('Matching tasks:');
-        filteredTasks.forEach(task => {
-            console.log(`${task.id}. ${task.description} [${task.completed ? 'Completed' : 'Not Completed'}]`);
-        });
-    } else {
-        console.log('No matching tasks found.');
-    }
+    renderTasks();
 }
 
-// Display advanced menu
-function displayMenu() {
-    console.log("\n--- Task Manager Menu ---");
-    console.log("1. Add Task");
-    console.log("2. View All Tasks");
-    console.log("3. Toggle Task Completion");
-    console.log("4. Remove Task");
-    console.log("5. Update Task");
-    console.log("6. Search Tasks");
-    console.log("7. Exit");
-    console.log("------------------------\n");
-}
-
-// Command interface in the console
-function runTaskManager() {
-    loadTasks();
-    let running = true;
-    while (running) {
-        displayMenu();
-        const command = parseInt(prompt('Choose an option (1-7):'));
-        switch (command) {
-            case 1:
-                addTask();
-                break;
-            case 2:
-                viewTasks();
-                break;
-            case 3:
-                toggleTask();
-                break;
-            case 4:
-                removeTask();
-                break;
-            case 5:
-                updateTask();
-                break;
-            case 6:
-                searchTasks();
-                break;
-            case 7:
-                running = false;
-                console.log('Exiting Task Manager.');
-                break;
-            default:
-                console.log('Invalid command. Please choose a number between 1 and 7.');
-                break;
-        }
-    }
-}
-
-// Start the Task Manager when the page loads
+// Load tasks on page load
 window.onload = function() {
-    runTaskManager();
+    loadTasks();
 };

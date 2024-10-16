@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #74ebd5, #acb6e5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+h1 {
+    color: #fff;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+input[type="text"]:focus {
+    border-color: #74ebd5;
+    box-shadow: 0 5px 15px rgba(116, 235, 213, 0.5);
+}
+button {
+    background-color: #74ebd5;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+button:hover {
+    background-color: #3fada8;
+}
+.task-list {
+    list-style-type: none;
+    margin-bottom: 20px;
+}
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+.task-item:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+.task-desc {
+    font-size: 16px;
+    font-weight: 500;
+    flex-grow: 1;
+    padding-right: 10px;
+}
+.task-actions {
+    display: flex;
+    gap: 10px;
+}
+.task-actions button {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+.remove-btn {
+    background-color: #f44336;
+}
+.remove-btn:hover {
+    background-color: #d32f2f;
+}
+.task-completed {
+    text-decoration: line-through;
+    color: gray;
+}
+.menu {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.menu button {
+    flex: 1;
+    margin: 0 5px;
+}
+.search-group {
+    margin-bottom: 20px;
+}
+.search-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
